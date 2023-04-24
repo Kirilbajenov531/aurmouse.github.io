@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Капча</title>
+    <style>
+      body {
+        background-color: blue;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+      }
+      h1 {
+        font-size: 36px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      input[type="text"] {
+        font-size: 24px;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+      input[type="submit"] {
+        font-size: 24px;
+        padding: 5px;
+        margin-bottom: 10px;
+        background-color: white;
+        color: blue;
+        border: none;
+        cursor: pointer;
+      }
+      .result {
+        font-size: 24px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Капча</h1>
+    <h2 id="captcha"></h2>
+    <input type="submit" value="Новая капча" onclick="generateCaptcha()">
+    <br>
+    <input type="text" id="input" onkeyup="checkCaptcha(event)">
+    <div class="result" id="result"></div>
+    <script>
+      function generateCaptcha() {
+        var captcha = Math.floor(Math.random() * 90000) + 10000;
+        document.getElementById("captcha").textContent = captcha;
+        document.getElementById("input").value = "";
+        document.getElementById("result").textContent = "";
+      }
+
+      function checkCaptcha(event) {
+        if (event.keyCode === 13) {
+          var input = document.getElementById("input").value;
+          var captcha = document.getElementById("captcha").textContent;
+          if (input === captcha) {
+            document.getElementById("result").textContent = "Дом ваш!";
+          } else {
+            generateCaptcha();
+            document.getElementById("result").textContent = "Неверная капча";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
