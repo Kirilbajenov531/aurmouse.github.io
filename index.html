@@ -1,35 +1,150 @@
-import random
-import time
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Капча</title>
+	<style>
+		body {
+			background-color: skyblue;
+			font-family: Arial;
+			font-size: 24px;
+			color: white;
+			text-align: center;
+		}
+		input[type="text"] {
+			font-size: 24px;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			margin: 10px;
+		}
+		input[type="submit"] {
+			font-size: 24px;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			margin: 10px;
+			background-color: white;
+			color: black;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		// Генерация случайной 5-значной капчи из цифр
+		function generateCaptcha() {
+			let captcha = "";
+			const chars = "0123456789";
+			for (let i = 0; i < 5; i++) {
+				captcha += chars[Math.floor(Math.random() * chars.length)];
+			}
+			document.getElementById("captcha").textContent = captcha;
+			return captcha;
+		}
 
-from flask import Flask, render_template, request
+		// Функция, вызываемая при отправке формы
+		function onSubmit() {
+			// Получить время ввода капчи
+			const endTime = new Date().getTime();
+			const timeTaken = (endTime - window.startTime) / 1000;
+			// Получить введенную капчу
+			const enteredCaptcha = document.getElementById("entered-captcha").value;
+			// Проверить, соответствует ли введенная капча сгенерированной капче
+			if (enteredCaptcha === window.captcha) {
+				document.getElementById("result").textContent = "Дом ваш!";
+				// Сгенерировать новую капчу
+				window.captcha = generateCaptcha();
+				// Обновить капчу на странице
+				document.getElementById("captcha").textContent = window.captcha;
+				// Очистить поле ввода
+				document.getElementById("entered-captcha").value = "";
+			} else {
+				document.getElementById("result").textContent = "Неверная капча!";
+				// Сгенерировать новую капчу
+				window.captcha = generateCaptcha();
+				// Обновить капчу на странице
+				document.getElementById("captcha").textContent = window.captcha;
+				// Очистить поле ввода
+				document.getElementById("entered-captcha").value = "";
+			}
+			// Вывести время ввода капчи на страницу
+			document.getElementById("time-taken").textContent = `Время ввода капчи: ${timeTaken.toFixed(2)} секунд`;
+			// Начать отсчет времени ввода капчи заново
+			window.startTime = new Date().getTime();
+			return false;
+		}
 
-app = Flask(__name__)
+		// Функция, вызываемая при загрузке страницы
+		window.onload = function() {
+					/* Инициализация переменных времени */
+		window.startTime = new Date().getTime();
+		var endTime;
 
-captcha = random.randint(10000, 99999)
-start_time = None
-input_time = None
-correct = False
+		/* Генерация и вывод капчи */
+		var captcha = generateCaptcha();
+		var captchaButton = document.createElement("button");
+		captchaButton.innerHTML = captcha;
+		captchaButton.style.backgroundColor = "white";
+		captchaButton.style.fontSize = "24px";
+		captchaButton.style.border = "0";
+		document.body.appendChild(captchaButton);
 
-@app.route('/')
-def index():
-    global captcha
-    captcha = random.randint(10000, 99999)
-    return render_template('index.html', captcha=captcha)
+		/* Создание поля ввода капчи */
+		var captchaInput = document.createElement("input");
+		captchaInput.type = "text";
+		captchaInput.style.fontSize = "24px";
+		document.body.appendChild(captchaInput);
 
-@app.route('/', methods=['POST'])
-def verify():
-    global captcha, start_time, input_time, correct
-    if request.form['captcha'] == str(captcha):
-        input_time = time.time()
-        if not start_time:
-            start_time = input_time
-        correct = True
-        return render_template('index.html', success=True, time=input_time - start_time)
-    else:
-        captcha = random.randint(10000, 99999)
-        start_time = None
-        correct = False
-        return render_template('index.html', error=True, captcha=captcha)
+		/* Создание кнопки отправки */
+		var submitButton = document.createElement("button");
+		submitButton.innerHTML = "Отправить";
+		submitButton.style.backgroundColor = "white";
+		submitButton.style.fontSize = "24px";
+		submitButton.style.border = "0";
+		document.body.appendChild(submitButton);
 
-if __name__ == '__main__':
-    app.run()
+		/* Создание элемента для вывода результата */
+		var resultLabel = document.createElement("p");
+		resultLabel.innerHTML = "Введите капчу и нажмите Отправить";
+		resultLabel.style.fontSize = "16px";
+		resultLabel.style.color = "white";
+		document.body.appendChild(resultLabel);
+
+		/* Обработчик нажатия кнопки отправки */
+		submitButton.addEventListener("click", function() {
+			/* Получение введенной капчи */
+			var enteredCaptcha = captchaInput.value;
+			
+			/* Получение времени ввода капчи */
+			endTime = new Date().getTime();
+			var timeTaken = (endTime - window.startTime) / 1000;
+			
+			/* Проверка введенной капчи */
+			if (enteredCaptcha === captcha) {
+				resultLabel.innerHTML = "Дом ваш!";
+			} else {
+				resultLabel.innerHTML = "Неверная капча!";
+			}
+			
+			/* Генерация и вывод новой капчи */
+			captcha = generateCaptcha();
+			captchaButton.innerHTML = captcha;
+			captchaInput.value = "";
+			window.startTime = new Date().getTime();
+			
+			/* Вывод времени ввода капчи */
+			console.log("Время ввода капчи: " + timeTaken.toFixed(2) + " секунд");
+		});
+
+		/* Функция для генерации случайной 5-значной капчи из цифр */
+		function generateCaptcha() {
+			var captcha = "";
+			var possible = "0123456789";
+			for (var i = 0; i < 5; i++) {
+				captcha += possible.charAt(Math.floor(Math.random() * possible.length));
+			}
+			return captcha;
+		}
+	</script>
+</body>
+</html>
